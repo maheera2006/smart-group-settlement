@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Smart Group Settlement</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav id="navbar" class="navbar hidden">
+    <div class="nav-brand" data-nav="dashboard">Smart Group Settlement</div>
+    <div class="nav-right">
+      <span id="nav-user-name"></span>
+      <button id="logout-btn" class="btn btn-ghost">Log out</button>
+    </div>
+  </nav>
+
+  <!-- LANDING VIEW -->
+  <section id="view-landing" class="view">
+    <div class="landing-hero">
+      <h1>Split expenses. <span class="accent">Settle smart.</span></h1>
+      <p class="landing-sub">
+        Most apps stop at "who owes whom." Smart Group Settlement goes one step further:
+        it takes every debt in your group and simplifies it into the fewest possible payments.
+      </p>
+      <div class="landing-example">
+        <div class="example-col">
+          <h4>Before</h4>
+          <p>A → B ₹500</p>
+          <p>A → C ₹300</p>
+          <p>D → B ₹200</p>
+          <p>D → C ₹400</p>
+        </div>
+        <div class="example-arrow">→</div>
+        <div class="example-col highlight">
+          <h4>After simplification</h4>
+          <p>A → B ₹300</p>
+          <p>A → C ₹500</p>
+          <p>D → C ₹400</p>
+        </div>
+      </div>
+      <div class="landing-actions">
+        <button class="btn btn-primary" data-show-auth="signup">Get started</button>
+        <button class="btn btn-secondary" data-show-auth="login">Log in</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTH VIEW -->
+  <section id="view-auth" class="view">
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-auth-tab="login">Log in</button>
+        <button class="auth-tab" data-auth-tab="signup">Sign up</button>
+      </div>
+
+      <form id="login-form" class="auth-form">
+        <label>Email</label>
+        <input type="email" id="login-email" required />
+        <label>Password</label>
+        <input type="password" id="login-password" required minlength="6" />
+        <p class="form-error" id="login-error"></p>
+        <button type="submit" class="btn btn-primary btn-block">Log in</button>
+      </form>
+
+      <form id="signup-form" class="auth-form hidden">
+        <label>Full name</label>
+        <input type="text" id="signup-name" required />
+        <label>Email</label>
+        <input type="email" id="signup-email" required />
+        <label>Password</label>
+        <input type="password" id="signup-password" required minlength="6" />
+        <p class="form-error" id="signup-error"></p>
+        <button type="submit" class="btn btn-primary btn-block">Create account</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- DASHBOARD VIEW -->
+  <section id="view-dashboard" class="view">
+    <div class="page-header">
+      <h2>Your groups</h2>
+      <button class="btn btn-primary" id="open-create-group">+ New group</button>
+    </div>
+    <div id="groups-list" class="cards-grid"></div>
+    <p id="groups-empty" class="empty-state hidden">You're not in any groups yet. Create one to get started.</p>
+  </section>
+
+  <!-- CREATE GROUP MODAL -->
+  <div id="modal-create-group" class="modal hidden">
+    <div class="modal-box">
+      <h3>Create a new group</h3>
+      <label>Group name</label>
+      <input type="text" id="new-group-name" placeholder="e.g. Goa Trip" />
+      <label>Member emails (comma-separated, must already have an account)</label>
+      <textarea id="new-group-members" placeholder="asha@example.com, priya@example.com"></textarea>
+      <p class="form-error" id="create-group-error"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-close-modal>Cancel</button>
+        <button class="btn btn-primary" id="submit-create-group">Create group</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GROUP DETAIL VIEW -->
+  <section id="view-group" class="view">
+    <div class="page-header">
+      <div>
+        <button class="btn btn-ghost" data-nav="dashboard">← Back</button>
+        <h2 id="group-title"></h2>
+      </div>
+      <div class="group-tabs">
+        <button class="tab-btn active" data-group-tab="expenses">Expenses</button>
+        <button class="tab-btn" data-group-tab="members">Members</button>
+        <button class="tab-btn tab-settlement" data-group-tab="settlements">Settlements</button>
+      </div>
+    </div>
+
+    <!-- Expenses tab -->
+    <div id="tab-expenses" class="tab-panel">
+      <div class="panel-header">
+        <h3>Balances</h3>
+      </div>
+      <div id="balances-row" class="balances-row"></div>
+
+      <div class="panel-header">
+        <h3>Expenses</h3>
+        <button class="btn btn-primary btn-small" id="open-add-expense">+ Add expense</button>
+      </div>
+      <div id="expenses-list" class="list"></div>
+      <p id="expenses-empty" class="empty-state hidden">No expenses yet.</p>
+    </div>
+
+    <!-- Members tab -->
+    <div id="tab-members" class="tab-panel hidden">
+      <div class="panel-header">
+        <h3>Members</h3>
+        <button class="btn btn-primary btn-small" id="open-add-member">+ Add member</button>
+      </div>
+      <div id="members-list" class="list"></div>
+    </div>
+
+    <!-- Settlements tab -->
+    <div id="tab-settlements" class="tab-panel hidden">
+      <div class="settlement-banner">
+        <h3>Simplified settlement plan</h3>
+        <p>These are the fewest payments needed to fully settle the group.</p>
+      </div>
+      <div id="settlements-list" class="list"></div>
+      <p id="settlements-empty" class="empty-state hidden">Everyone is settled up. 🎉</p>
+
+      <div class="panel-header">
+        <h3>Payment history</h3>
+      </div>
+      <p class="history-note">Every "Mark as Paid" is recorded as a real payment and is included in all future balance calculations — it's a ledger, not just a checklist.</p>
+      <div id="payment-history-list" class="list"></div>
+      <p id="payment-history-empty" class="empty-state hidden">No payments recorded yet.</p>
+    </div>
+  </section>
+
+  <!-- ADD EXPENSE MODAL -->
+  <div id="modal-add-expense" class="modal hidden">
+    <div class="modal-box">
+      <h3>Add expense</h3>
+      <label>Description</label>
+      <input type="text" id="expense-desc" placeholder="e.g. Dinner" />
+      <label>Amount (₹)</label>
+      <input type="number" id="expense-amount" min="0" step="0.01" />
+      <label>Paid by</label>
+      <select id="expense-paid-by"></select>
+      <label>Category (optional)</label>
+      <input type="text" id="expense-category" placeholder="Food, Travel..." />
+      <label>Date</label>
+      <input type="date" id="expense-date" />
+      <label>Participants (who shares this expense)</label>
+      <div id="expense-participants" class="checkbox-list"></div>
+      <p class="form-error" id="add-expense-error"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-close-modal>Cancel</button>
+        <button class="btn btn-primary" id="submit-add-expense">Add expense</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD MEMBER MODAL -->
+  <div id="modal-add-member" class="modal hidden">
+    <div class="modal-box">
+      <h3>Add member</h3>
+      <label>Member email (must already have an account)</label>
+      <input type="email" id="add-member-email" />
+      <p class="form-error" id="add-member-error"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-close-modal>Cancel</button>
+        <button class="btn btn-primary" id="submit-add-member">Add member</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Firebase SDK (compat, no build step required) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/settlement.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
